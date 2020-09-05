@@ -1,4 +1,4 @@
-# 我的餐廳清單_登入版(2020/08/23)
+# Todo_Sequelize
 
 使用Node.js, Express, Sequelize, MySQL 套件製作而成
 
