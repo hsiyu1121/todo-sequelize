@@ -1,47 +1,84 @@
-const express = require('express')
-const exphbs = require('express-handlebars')
-const bodyParser = require('body-parser')
-const methodOverride = require('method-override')
-const bcrypt = require('bcryptjs')
+const express = require("express");
+const session = require("express-session");
+const exphbs = require("express-handlebars");
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const flash = require("connect-flash");
 
-const app = express()
+if(process.env.NODE_ENV !== 'production'){
+  require('dotenv').config()
+}
+
+const routes = require("./routes");
+const app = express();
+const usePassport = require("./config/passport");
 const PORT = 3000
 
-app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
-app.set('view engine', 'hbs')
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(methodOverride('_method'))
+app.engine("hbs", exphbs({ defaultLayout: "main", extname: ".hbs" }));
+app.set("view engine", "hbs");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'ThisIsMySecret',
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+usePassport(app);
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  res.locals.user = req.user;
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.warning_msg = req.flash("warning_msg");
+});
 
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
-
-app.get('/users/login', (req, res) => {
-  res.render('login')
-})
-
-app.post('/users/login', (req, res) => {
-  res.send('login')
-})
-
-app.get('/users/register', (req, res) => {
-  res.render('register')
-})
-
-app.post('/users/register', (req, res) => {
-  res.send('register')
-})
-
-app.get('/users/logout', (req, res) => {
-  res.send('logout')
-})
-
-
+app.use(routes);
 
 app.listen(PORT, () => {
-  console.log(`App is running on http://localhost:${PORT}`)
-})
+  console.log(`App is running on http://localhost:${PORT}`);
+});
+const express = require("express");
+const session = require("express-session");
+const exphbs = require("express-handlebars");
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const flash = require("connect-flash");
+
+if(process.env.NODE_ENV !== 'production'){
+  require('dotenv').config()
+}
+
+const routes = require("./routes");
+const app = express();
+const usePassport = require("./config/passport");
+const PORT = 3000
+
+app.engine("hbs", exphbs({ defaultLayout: "main", extname: ".hbs" }));
+app.set("view engine", "hbs");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'ThisIsMySecret',
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+usePassport(app);
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  res.locals.user = req.user;
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.warning_msg = req.flash("warning_msg");
+});
+
+app.use(routes);
+
+app.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT}`);
+});
