@@ -39,7 +39,7 @@
 
   ``npx sequelize db:migrate``
   
-*執行Seeder
+* 執行Seeder
 
   ``npx sequelize db:seed:all``
 * 透過node執行程式
